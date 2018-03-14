@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+     <script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+     <title>vue-practive</title>
+</head>
+
+<body>
+     <div id="app">
+          <h3 v-bind:title="createTime">个人信息(鼠标悬停几秒钟查看此处动态绑定的提示信息！)</h3>
+          <!-- person 指向 vm实例的data.person对象 -->
+          <p>我叫{{ person.name }}</p>
+          <p>我今年{{ person.age }}岁了</p>
+          <p>我是做{{ person.job }}工作的</p>
+          <p v-if="seek">[我是否显示，有你控制!]</p>
+
+          <!-- 点击按钮去个人信息数据 -->
+          <button @click="getData()">获取数据</button>
+          </br>
+          </br>
+          <ol>
+               <li v-for="todo in todos"> {{todo.text}} </li>
+          </ol>
+     </div>
+     <!--点击获取个人信息(Other)-->
+     <button id="btn"> 点我也能获取数据 </button>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-2">
+          <p> {{message}} </p>
+          <button v-on:click="reverseMessage">逆转消息</button>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-3">
+          <p> {{message}} </p>
+          <input v-model="message">
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-4">
+          <span v-once>(v-once): {{ msg }}</span>
+          <ol>
+               <todo-item v-for="item in groceryList" v-bind:todo="item" v-bind:key="item.id"></todo-item>
+          </ol>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-5">
+          <p>计算属性(computed)：</p>
+          <p>Original message：{{message}} </p>
+          <p>Computed reversed message：{{reverseMessage}} </p>
+          <p> 全名：{{fullName}} </p>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="watch-example">
+          <p>侦听器</p>
+          <p>Ask a yes/no question:
+               <input v-model="question">
+          </p>
+          <p> {{answer}} </p>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-6" v-bind:style="[baseStyles, standingStyles]">
+          bind-HTML-class
+     </div>
+
+     <div id="app-7">
+          <template v-if="loginType==='xiaoLo'">
+               <label>name</label>
+               <input placeholder="Enter your name" key="name-input">
+          </template>
+          <template v-else>
+               <label>email</label>
+               <input placeholder="Enter your email" key="email-input">
+          </template>
+          <br/>
+          <button @click="changeName">Change placeholder</button>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="app-8">
+          <ul>
+               <li v-for="(item, index) in items"> {{item.message}} →→→ {{index}} </li>
+          </ul>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     一个对象的 v-for:
+     <br/>
+     <ul id="v-for-object" class="demo">
+          <li v-for="(value, key, index) in object">{{key}} : {{value}} →→→ {{index}}</li>
+     </ul>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="todo-list-example">
+          <input v-model="newTodoText" v-on:keyup.enter="addNewTodo" placeholder="Add a todo">
+          <ul>
+               <li is="todo-item" v-for="(todo, index) in todos" v-bind:key="todo.id" v-bind:title="todo.title" v-on:remove="todos.splice(index,1)"></li>
+          </ul>
+          <input type="checkbox" id="checkbox" v-model="checked">
+          <label for="checkbox">{{checked}}</label>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="options-list">
+          <select v-model="selected">
+               <option v-for="option in options" :value="option.value"> {{option.text}} </option>
+          </select>
+          <span>Selected: {{ selected }}</span>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <div id="component-example">
+          <my-custom-component-a></my-custom-component-a>
+          <my-custom-component-range></my-custom-component-range>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <!--props(短横线分隔式命名)-->
+     <div id="custom-props">
+          <custom-prop my-message="666"></custom-prop>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+     <!--v-on绑定自定义事件-->
+     <div id="counter-event-example">
+          <p> {{total}} </p>
+          <button-counter v-on:increment="incrementTotal"></button-counter>
+          <button-counter v-on:increment="incrementTotal"></button-counter>
+     </div>
+     <p>-------------------------------------------------------------</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+     <script type="text/javaScript"> 
+          //个人信息数据
+          var userInfo = {
+               name: "xiaoLo",
+               age: 24,
+               job: "mobile developer"
+          }
+          //实例化vue
+          var vm = new Vue({
+               el: "#app",
+               data: {
+                    person: {},
+                    createTime: "页面创建于" + new Date().toLocaleString(),
+                    seek: true,
+                    todos: [
+                         { text: '学习Vue' },
+                         { text: '学习JavaScript' },
+                         { text: '一个整体的项目' }
+                    ]
+               },
+               methods: {
+                    getData: function() {
+                         this.person = userInfo;
+                    }
+
+               }
+          })
+          document.getElementById('btn').addEventListener('click',function(){
+               vm.person = userInfo;
+          },false)
+
+          //app-2  
+          new Vue({
+               el: "#app-2",
+               data: {
+                    message: "Hello Vue.js"
+               },
+               methods: {
+                    reverseMessage: function() {
+                         this.message = this.message.split('').reverse().join('')
+                    }
+               }
+          })
+
+          //app-3
+          new Vue({
+               el:"#app-3",
+               data: {
+                    message: "同步表单输入内容"
+               }
+          })
+          
+          //组件化
+          Vue.component('todo-item',{
+               props: ['todo'],
+               template: '<li> {{todo.text}} </li>'
+          })
+          new Vue({
+               el: "#app-4",
+               data: {
+                    groceryList:[
+                         { id: 0, text: '蔬菜' },
+                         { id: 1, text: '奶酪' },
+                         { id: 2, text: '随便其它什么人吃的东西' }
+                    ],
+                    msg: "这个将不会改变"
+               }
+          })
+
+          //app-5
+          new Vue({
+               el: "#app-5",
+               data: {
+                    message: "Hello Vue World!",
+                    firsrName: "Xiao",
+                    lastName: "Lo"
+               },
+               computed: {
+                    reverseMessage: function() {
+                         return this.message.split('').reverse().join('')
+                    },
+                    fullName: function() {
+                         return this.firsrName + " " + this.lastName
+                    }
+               }
+          })
+
+          //watch-example
+          new Vue({
+               el: "#watch-example",
+               data: {
+                    question: "",
+                    answer: "I cannot give you an answer until you ask a question!"
+               },
+               watch: {
+                    question: function(newQuestion, oldQuestion) {
+                         this.answer = "Waiting for you to stop typing..."
+                         this.getAnswer()
+                    }
+               },
+               methods: {
+                    // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+                    // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率,AJAX 请求直到用户输入完毕才会发出。
+                    // 
+                    getAnswer: _.debounce(
+                         function() {
+                              if (this.question.indexOf('?') === -1) {
+                                   this.answer = 'Questions usually contain a question mark. ;-)'
+                                   return
+                              }
+                              this.answer = "Thinking..."
+
+                              var vm = this
+                              axios.get('https://yesno.wtf/api')
+                                   .then(function (response) {
+                                        vm.answer = _.capitalize(response.data.answer)
+                                   })
+                                   .catch(function (error) {
+                                        vm.answer = 'Error! Could not reach the API. ' + error
+                                   })
+                         },500
+                    )
+               }
+          })
+
+          //app-6
+          new Vue({
+               el: "#app-6",
+               data: {
+                    baseStyles: {
+                         color: 'red',
+                         fontSize: '25px'
+                    },
+                    standingStyles: {
+                         backgroundColor: 'blue'
+                    }
+               }
+
+          })
+
+          //app-7
+          new Vue({
+               el: "#app-7",
+               data: {
+                    loginType: "xiaoLo"
+               },
+               methods: {
+                    changeName: function() {
+                         return this.loginType==='xiaoLo' ? this.loginType='xiaoKo':this.loginType='xiaoLo'
+                    }
+               }
+          })
+
+          new Vue({
+               el: "#app-8",
+               data: {
+                    items: [
+                         {message: "Hello Vue"},
+                         {message: "Good Luck!"},
+                         {message: "Never give up!"}
+                    ]
+               }
+          })
+
+          //v-for-object
+          new Vue({
+               el: "#v-for-object",
+               data: {
+                    object: {
+                         firsrName: "xiaoLo",
+                         lastName: "Loxiao",
+                         age: 24
+                    }
+               }
+          })
+
+          //todo-list
+          Vue.component('todo-item',{
+               template:
+                    '<li>\
+                         {{ title }}\
+                         <button @click="$emit(\'remove\')"> X </button>\
+                    </li>\
+               ',
+               props: ['title']
+          })
+          var todo_vm = new Vue({
+               el: "#todo-list-example",
+               data: {
+                    newTodoText: '',
+                    todos: [
+                         {id:1, title:'Do the dishes'},
+                         {id:2, title:'Take out the trash'},
+                         {id:3, title:'Mow the law'}
+                    ],
+                    nextTodoId: 4,
+                    checked: false
+               },
+               methods: {
+                    addNewTodo: function() {
+                         this.todos.push({
+                              id: this.nextTodoId ++,
+                              title: this.newTodoText
+                         })
+                         this.newTodoText = ''
+                    }
+               }
+          })
+
+          //options-list
+          new Vue({
+               el: "#options-list",
+               data: {
+                    selected: "A",
+                    options: [
+                         {text: "Have a good time!", value: "A"},
+                         {text: "Give up your dream!", value: "B"},
+                         {text: "No take your handes", value: "C"}
+                    ]
+               }
+          })
+
+          //全局组件
+          Vue.component('my-custom-component-a',{
+               template: '\
+                    <div>自定义 [全局组件] ！</div>\
+               '
+          })
+          new Vue({
+               el: "#component-example"
+          })
+
+          //局部组件
+          var temp = {
+               template: '\
+                    <div>自定义 [局部组件] ！</div>\
+               '
+          }
+          new Vue({
+               el: "#component-example",
+               components: {
+                    "my-custom-component-range": temp
+               }
+          })
+
+          //props------(短横线分隔式命名)
+          var sp = {
+               props: ['myMessage'],
+               template: '<div> {{myMessage}} </div>'
+          }
+          new Vue({
+               el: "#custom-props",
+               components: {
+                    "custom-prop": sp
+               }
+          })
+
+          // v-on绑定自定义事件 
+          var onvm = {
+               template: '<button v-on:click="incrementCounter">{{ counter }}</button>',
+               data:function() {
+                    return {
+                         counter: 0
+                    }
+               },
+               methods: {
+                    incrementCounter: function() {
+                         this.counter += 1
+                         this.$emit('increment')
+                    }
+               }
+          }
+          new Vue({
+               el: "#counter-event-example",
+               data: {
+                    total: 0
+               },
+               components: {
+                    'button-counter': onvm
+               },
+               methods: {
+                    incrementTotal: function() {
+                         this.total += 1
+                    }
+               }
+          })
+          
+     </script>
+
+</body>
+
+</html>
